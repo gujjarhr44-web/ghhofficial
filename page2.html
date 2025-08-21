@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Photo Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+    <div class="header-section w-full">
+        <span class="icon">&lt;</span> <h1>My Photos (50)</h1>
+        <div class="flex items-center">
+            <span class="icon">&#10003;</span> <span class="icon">&#8942;</span>
+            <button id="adminVerifyBtn" class="admin-btn hidden">Admin</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="IMG_20241117_205618.jpg" alt="Gallery Photo 1" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250112_091519.jpg" alt="Gallery Photo 2" class="zoomable-image">
+            </div>
+            <div class="gallery-item" data-private="true">
+                <img src="IMG_20250411_070406.jpg" alt="Gallery Photo 3" class="zoomable-image sensitive-image">
+                <div class="sensitive-cover">
+                    This image contains sensitive information.<br>Please verify you are an admin to see this image.
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="4.jpg" alt="Gallery Photo 4" class="zoomable-image">
+            </div>
+            <div class="gallery-item" data-private="true">
+                 <img src="5.jpg" alt="Gallery Photo 5" class="zoomable-image sensitive-image">
+                <div class="sensitive-cover">
+                    This image contains sensitive information.<br>Please verify you are an admin to see this image.
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="6.jpg" alt="Gallery Photo 6" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="7.jpg" alt="Gallery Photo 7" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="8.jpg" alt="Gallery Photo 8" class="zoomable-image">
+            </div>
+            <div class="gallery-item" data-private="true">
+                 <img src="9.jpg" alt="Gallery Photo 9" class="zoomable-image sensitive-image">
+                <div class="sensitive-cover">
+                    This image contains sensitive information.<br>Please verify you are an admin to see this image.
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="10.jpg" alt="Gallery Photo 10" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250505_154050.jpg" alt="Gallery Photo 11" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250505_160358.jpg" alt="Gallery Photo 12" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250505_164506.jpg" alt="Gallery Photo 13" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250505_173004.jpg" alt="Gallery Photo 14" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250506_145719.jpg" alt="Gallery Photo 15" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250506_181747.jpg" alt="Gallery Photo 16" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250507_160534.jpg" alt="Gallery Photo 17" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250507_193339.jpg" alt="Gallery Photo 18" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250507_202350.jpg" alt="Gallery Photo 19" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250508_142718.jpg" alt="Gallery Photo 20" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250508_153725.jpg" alt="Gallery Photo 21" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250508_170327.jpg" alt="Gallery Photo 22" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250508_215902.jpg" alt="Gallery Photo 23" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250509_130752.jpg" alt="Gallery Photo 24" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250509_180058.jpg" alt="Gallery Photo 25" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250509_200155.jpg" alt="Gallery Photo 26" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250510_134053.jpg" alt="Gallery Photo 27" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250510_192258.jpg" alt="Gallery Photo 28" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250511_164807.jpg" alt="Gallery Photo 29" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250512_065335.jpg" alt="Gallery Photo 30" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250512_105221.jpg" alt="Gallery Photo 31" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250512_141639.jpg" alt="Gallery Photo 32" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250513_110006.jpg" alt="Gallery Photo 33" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250513_115316.jpg" alt="Gallery Photo 34" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250514_081122.jpg" alt="Gallery Photo 35" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250514_115206.jpg" alt="Gallery Photo 36" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250514_130311.jpg" alt="Gallery Photo 37" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250515_091008.jpg" alt="Gallery Photo 38" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250515_161555.jpg" alt="Gallery Photo 39" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250516_144955.jpg" alt="Gallery Photo 40" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250517_155018.jpg" alt="Gallery Photo 41" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250518_143118.jpg" alt="Gallery Photo 42" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250524_172049.jpg" alt="Gallery Photo 43" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250606_145657.jpg" alt="Gallery Photo 44" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250607_172828.jpg" alt="Gallery Photo 45" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250607_173608.jpg" alt="Gallery Photo 46" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250607_141952.jpg" alt="Gallery Photo 47" class="zoomable-image">
+            </div>
+            <div class="gallery-item">
+                <img src="IMG_20250604_230023.jpg" alt="Gallery Photo 48" class="zoomable-image">
+            </div>
+            <div class="gallery-item" data-private="true">
+                 <img src="1749286267183.jpg" alt="Gallery Photo 49" class="zoomable-image sensitive-image">
+                <div class="sensitive-cover">
+                    This image contains sensitive information.<br>Please verify you are an admin to see this image.
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="1749285905365.jpg" alt="Gallery Photo 50" class="zoomable-image">
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal-overlay">
+        <span class="close-modal-btn">&times;</span>
+        <img class="modal-content-img" id="zoomedImage" src="" alt="Zoomed Image">
+        <div class="caption-area">
+            <button id="generateCaptionBtn" class="generate-caption-btn">
+                Generate Caption ✨
+            </button>
+            <div id="captionLoading" class="hidden">Loading...</div>
+            <div id="captionDisplay" class="caption-display"></div>
+            <button id="downloadImageBtn" class="download-btn hidden">
+                Download
+            </button>
+        </div>
+    </div>
+
+    <script src="script2.js"></script>
+</body>
+</html>
