@@ -1,0 +1,261 @@
+/* Custom styles for background, neon font, and animations */
+body {
+    font-family: 'Inter', sans-serif;
+    /* NEON background gradient and animation */
+    background: linear-gradient(135deg, #8a2be2, #00ffff, #ff1493, #00ff00); /* Purple, Cyan, Deep Pink, Lime Green for neon effect */
+    background-size: 400% 400%; /* Larger size for flowing animation */
+    animation: neonBackgroundAnimation 20s ease infinite alternate; /* Slower, flowing animation */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+    color: #333; /* Default text color for contrast */
+}
+
+/* Keyframe animation for the new neon background gradient */
+@keyframes neonBackgroundAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Neon glow text effect - adjusted for brighter background */
+.neon-text {
+    color: #d1005a; /* Deep pink/red neon for contrast */
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #ff007f,
+        0 0 30px #ff007f,
+        0 0 40px #ff007f,
+        0 0 55px #ff007f,
+        0 0 70px #ff007f;
+    animation: flicker 1.5s infinite alternate; /* Slower flicker effect */
+}
+
+/* Keyframe animation for flicker effect */
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    40% { opacity: 0.8; }
+    42% { opacity: 1; }
+    44% { opacity: 0.9; }
+    46% { opacity: 1; }
+    48% { opacity: 0.9; }
+    50% { opacity: 1; }
+    52% { opacity: 0.8; }
+    54% { opacity: 1; }
+    56% { opacity: 0.9; }
+    58% { opacity: 1; }
+    60% { opacity: 0.8; }
+    62% { opacity: 1; }
+}
+
+/* Login card and form styles */
+.login-card {
+    background: rgba(0, 0, 0, 0.4); /* Dark semi-transparent background */
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeInBounce 1s ease-out forwards;
+}
+
+@keyframes fadeInBounce {
+    0% { opacity: 0; transform: translateY(-50px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+input {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+label {
+    color: #e0e0e0;
+}
+
+input:not(:placeholder-shown) + label,
+input:focus + label {
+    transform: translateY(-24px) scale(0.85);
+    left: 4px;
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+}
+
+button[type="submit"] {
+    background: linear-gradient(45deg, #ff007f, #ff4c94);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: btnGlow 2s infinite;
+}
+
+button[type="submit"]:hover {
+    transform: scale(1.05);
+}
+
+button[type="submit"]:active {
+    transform: scale(0.95);
+    animation: none;
+}
+
+@keyframes btnGlow {
+    0% { box-shadow: 0 0 8px rgba(255, 0, 127, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 0, 127, 0.8); }
+    100% { box-shadow: 0 0 8px rgba(255, 0, 127, 0.5); }
+}
+
+/* Adjust Forgot Password? link color to pink theme */
+.text-indigo-600 {
+    color: #f0f0f0; /* Changed to a light color for better contrast */
+    text-shadow: 0 0 3px #000;
+}
+.text-indigo-600:hover {
+    color: #ff007f;
+    text-shadow: 0 0 5px #ff007f;
+}
+
+/* Styles for the custom pop-up modal */
+.modal {
+    position: fixed;
+    z-index: 1000; /* High z-index to appear on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    animation: modalShow 0.3s ease-out;
+}
+
+@keyframes modalShow {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+.close-button:hover,
+.close-button:focus {
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#messageBox {
+    transition: all 0.5s ease;
+}
+
+/* --- New styles for Welcome Transition Screen --- */
+.welcome-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    display: none; /* Hidden by default, shown by JavaScript */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    overflow: hidden;
+    /* 'Galaxy scene' effect using multiple radial gradients */
+    background-image: radial-gradient(circle at 10% 90%, #8a2be2, transparent 80%),
+                      radial-gradient(circle at 90% 10%, #00ffff, transparent 80%),
+                      radial-gradient(circle at 50% 50%, #fff, transparent 80%),
+                      radial-gradient(circle, #ff007f, transparent 80%);
+    background-size: 200% 200%, 150% 150%, 180% 180%, 250% 250%;
+    animation: galaxy-move 15s infinite alternate;
+}
+
+.welcome-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    opacity: 0; /* Initially hidden, will be animated by JS */
+    animation: fadeIn 2s forwards;
+    text-shadow: 0 0 15px #fff, 0 0 25px #ff007f;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes galaxy-move {
+    0% { background-position: 0% 0%, 10% 90%, 90% 10%, 50% 50%; }
+    100% { background-position: 100% 100%, 90% 10%, 10% 90%, 50% 50%; }
+}
+.customize-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.customize-button:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+.modal-content input {
+    color: black;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.modal-content button {
+    background-color: #4f46e5;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
