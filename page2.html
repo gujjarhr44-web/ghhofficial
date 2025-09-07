@@ -11,13 +11,15 @@
     <div class="header-section w-full">
         <span class="icon">&lt;</span> <h1>My Photos (50)</h1>
         <div class="flex items-center">
-            <span class="icon">&#10003;</span> <span class="icon">&#8942;</span>
-            <button id="adminVerifyBtn" class="admin-btn hidden">Admin</button>
+            <label for="photo-upload" class="upload-btn">
+                Add Photo +
+            </label>
+            <input type="file" id="photo-upload" accept="image/*" class="hidden">
         </div>
     </div>
 
     <div class="container">
-        <div class="gallery-grid">
+        <div class="gallery-grid" id="gallery-grid">
             <div class="gallery-item">
                 <img src="IMG_20241117_205618.jpg" alt="Gallery Photo 1" class="zoomable-image">
             </div>
@@ -186,16 +188,6 @@
     <div id="imageModal" class="modal-overlay">
         <span class="close-modal-btn">&times;</span>
         <img class="modal-content-img" id="zoomedImage" src="" alt="Zoomed Image">
-        <div class="caption-area">
-            <button id="generateCaptionBtn" class="generate-caption-btn">
-                Generate Caption ✨
-            </button>
-            <div id="captionLoading" class="hidden">Loading...</div>
-            <div id="captionDisplay" class="caption-display"></div>
-            <button id="downloadImageBtn" class="download-btn hidden">
-                Download
-            </button>
-        </div>
     </div>
 
     <script src="script2.js"></script>
