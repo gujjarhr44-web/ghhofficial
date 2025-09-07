@@ -6,7 +6,6 @@ body {
     padding: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    /* Animated Gradient Background */
     background: linear-gradient(-45deg, #1a2a6c, #b21f1f, #fdbb2d);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
@@ -41,6 +40,8 @@ body {
     overflow: hidden;
     position: relative;
     display: flex;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
 }
 
 .gallery-item img {
@@ -48,28 +49,27 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.3s ease;
-    /* Initially hidden for animation. The JS will unhide on load. */
-    opacity: 0; 
-    transform: translateY(20px);
+    opacity: 1; /* Make photos visible by default */
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-in;
 }
-/* Sensitive images are explicitly hidden by default */
+
 .gallery-item .sensitive-image {
     display: none;
 }
 
-.gallery-item:hover img {
-    transform: scale(1.1);
+.gallery-item:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    z-index: 1;
 }
 
-/* New style for the sensitive image cover */
 .sensitive-cover {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* Dark semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.85);
     color: #fff;
     display: flex;
     justify-content: center;
@@ -88,7 +88,6 @@ body {
 }
 
 
-/* Modal styles for image zoom */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -96,7 +95,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.9);
-    display: none; /* Initially hidden */
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -106,14 +105,32 @@ body {
     display: flex;
 }
 
+.modal-overlay.audio-reactive {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.9) 70%);
+    background-size: 200% 200%;
+    animation: audioPulse 5s ease-in-out infinite alternate;
+}
+
+@keyframes audioPulse {
+    0% {
+        background-position: 0% 0%;
+        opacity: 1;
+    }
+    100% {
+        background-position: 100% 100%;
+        opacity: 0.9;
+    }
+}
+
+
 .modal-content-img {
     max-width: 90%;
     max-height: 90%;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     animation: zoomIn 0.3s forwards;
-    /* This makes the image draggable for swipe gestures on some devices */
-    touch-action: pan-y;
+    touch-action: none;
+    transition: filter 0.3s ease;
 }
 
 @keyframes zoomIn {
@@ -136,14 +153,13 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s;
-    z-index: 1001; /* Ensure close button is on top */
+    z-index: 1001;
 }
 
 .close-modal-btn:hover {
     color: #f00;
 }
 
-/* Header styles */
 .header-section {
     position: sticky;
     top: 0;
@@ -177,7 +193,6 @@ body {
     color: #aaa;
 }
 
-/* New Admin Button Styling */
 .admin-btn {
     background: linear-gradient(90deg, #5b21b6, #6d28d9);
     color: white;
@@ -199,66 +214,61 @@ body {
     box-shadow: none;
 }
 
-
-/* Caption button and display styles */
-.generate-caption-btn {
-    background: linear-gradient(90deg, #3d7e82, #1b3a3c);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-    margin-bottom: 10px;
-}
-
-.generate-caption-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-}
-
-.generate-caption-btn:active {
-    transform: translateY(0);
-    box-shadow: none;
-}
-
-.caption-display {
-    margin-top: 10px;
-    font-style: italic;
-    font-size: 0.95em;
-    min-height: 20px;
-    color: #ccc;
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.caption-area {
-    width: 90%;
-    max-width: 600px;
-    margin-top: 20px;
-    text-align: center;
-}
-
 .hidden {
     display: none;
 }
 
-.download-btn {
-    background-color: #1abc9c;
+/* New download button styles on gallery items */
+.download-item-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.2);
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
     border: none;
+    border-radius: 5px;
+    width: auto;
+    height: auto;
+    padding: 5px 8px;
+    font-size: 0.8rem;
     cursor: pointer;
-    margin-top: 10px;
     transition: background-color 0.3s ease;
+    z-index: 5;
 }
 
-.download-btn:hover {
-    background-color: #16a085;
+.download-item-btn:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+
+.caption-area {
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.filter-bw {
+    filter: grayscale(100%);
+}
+
+.filter-sepia {
+    filter: sepia(100%);
+}
+
+.upload-btn {
+    background: linear-gradient(45deg, #10b981, #1abc9c);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px rgba(26, 188, 156, 0.5);
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(26, 188, 156, 0.8);
 }
 
 /* Responsive Media Queries */
@@ -284,14 +294,11 @@ body {
         max-width: 100%;
         max-height: 100%;
         border-radius: 0;
+        touch-action: pan-x pan-y pinch-zoom;
     }
 
     .close-modal-btn {
         top: 10px;
         right: 20px;
-    }
-
-    .caption-area {
-        margin-top: 10px;
     }
 }
