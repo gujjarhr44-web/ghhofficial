@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTranslateY = 0;
         // Remove filters
         zoomedImage.classList.remove('filter-bw', 'filter-sepia');
-        imageModal.classList.remove('audio-reactive');
     }
 
     // Function to show a specific image in the modal
@@ -86,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
             currentScale = 1;
             currentTranslateX = 0;
             currentTranslateY = 0;
-            imageModal.classList.add('audio-reactive');
         }
     }
 
