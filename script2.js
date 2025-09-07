@@ -3,16 +3,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Page 2 (Photo & Video Gallery) loaded successfully!');
 
-    // Check if the user is an admin from session storage
     let isAdmin = sessionStorage.getItem('isAdmin') === 'true';
 
     // --- Header Back Arrow Functionality ---
     const backArrow = document.querySelector('.header-section .icon:first-child');
     if (backArrow) {
         backArrow.addEventListener('click', () => {
-            // Clear admin session flag when going back to login
             sessionStorage.removeItem('isAdmin');
-            window.history.back(); // Go back to the previous page (login page)
+            window.history.back();
         });
     }
 
@@ -20,40 +18,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageModal = document.getElementById('imageModal');
     const zoomedImage = document.getElementById('zoomedImage');
     const closeModalBtn = document.querySelector('.close-modal-btn');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const galleryImages = document.querySelectorAll('.gallery-item img.zoomable-image');
-    const downloadImageBtn = document.getElementById('downloadImageBtn');
+    const galleryGrid = document.getElementById('gallery-grid');
+    const photoUploadInput = document.getElementById('photo-upload');
     
-    // --- Gemini API elements ---
-    const generateCaptionBtn = document.getElementById('generateCaptionBtn');
-    const captionDisplay = document.getElementById('captionDisplay');
-    const captionLoading = document.getElementById('captionLoading');
-
-    // --- Admin Verification elements ---
-    const adminVerifyBtn = document.getElementById('adminVerifyBtn');
-
-    let currentIndex = 0; // Track the current image index
+    let galleryItems;
+    let galleryImages;
+    let currentIndex = 0;
 
     // --- Pinch-to-Zoom and Pan variables ---
     let initialPinchDistance = 0;
     let currentScale = 1;
     let isPinching = false;
+    let initialScaleOnPinch = 1;
+    let lastPanX = 0;
+    let lastPanY = 0;
+    let currentTranslateX = 0;
+    let currentTranslateY = 0;
+
+    let isSwipingDown = false;
 
     // Function to close the modal (reusable)
     function closeModal() {
         imageModal.classList.remove('show');
         document.body.style.overflow = 'auto';
-        captionDisplay.textContent = '';
-        captionLoading.classList.add('hidden');
-        downloadImageBtn.classList.add('hidden'); // Hide the download button when modal is closed
         // Reset zoom and pan
-        zoomedImage.style.transform = 'scale(1)';
+        zoomedImage.style.transform = 'scale(1) translate(0px, 0px)';
         currentScale = 1;
         isPinching = false;
+        currentTranslateX = 0;
+        currentTranslateY = 0;
+        // Remove filters
+        zoomedImage.classList.remove('filter-bw', 'filter-sepia');
+        imageModal.classList.remove('audio-reactive');
     }
 
     // Function to show a specific image in the modal
     function showImage(index) {
+        galleryItems = document.querySelectorAll('.gallery-item');
+        galleryImages = document.querySelectorAll('.gallery-item img.zoomable-image');
+        
         const item = galleryItems[index];
         const isPrivate = item.hasAttribute('data-private');
         const adminPassword = 'Gujjar@5757';
@@ -65,12 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionStorage.setItem('isAdmin', 'true');
                 alert('Admin verification successful! Sensitive images are now visible.');
                 updateGalleryView();
-                // Re-call the function to show the now-accessible image
                 showImage(index);
             } else {
                 alert('Invalid password. Please try again.');
             }
-            return; // Exit the function after the prompt
+            return;
         }
 
         if (index >= 0 && index < galleryImages.length) {
@@ -78,23 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const imgSrc = galleryImages[currentIndex].src;
             zoomedImage.src = imgSrc;
             imageModal.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-            downloadImageBtn.classList.remove('hidden'); // Show the download button
+            document.body.style.overflow = 'hidden';
+            // Reset zoom for the new image
+            zoomedImage.style.transform = 'scale(1) translate(0px, 0px)';
+            currentScale = 1;
+            currentTranslateX = 0;
+            currentTranslateY = 0;
+            imageModal.classList.add('audio-reactive');
         }
-    }
-
-    // Navigate to the next image
-    function showNextImage() {
-        showImage((currentIndex + 1) % galleryImages.length);
-    }
-
-    // Navigate to the previous image
-    function showPrevImage() {
-        showImage((currentIndex - 1 + galleryImages.length) % galleryImages.length);
     }
 
     // Function to update the gallery view based on admin status
     function updateGalleryView() {
+        galleryItems = document.querySelectorAll('.gallery-item');
         galleryItems.forEach(item => {
             const isPrivate = item.hasAttribute('data-private');
             const img = item.querySelector('.sensitive-image');
@@ -102,11 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isPrivate) {
                 if (isAdmin) {
-                    // Show image and hide cover for admin
                     if (img) img.style.display = 'block';
                     if (cover) cover.style.display = 'none';
                 } else {
-                    // Hide image and show cover for non-admin
                     if (img) img.style.display = 'none';
                     if (cover) cover.style.display = 'flex';
                 }
@@ -114,55 +110,103 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event listeners for each image
-    galleryItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
-            showImage(index);
+    // Function to initialize event listeners for gallery items and download button
+    function initializeGalleryItems() {
+        galleryItems = document.querySelectorAll('.gallery-item');
+        galleryImages = document.querySelectorAll('.gallery-item img.zoomable-image');
+        
+        galleryItems.forEach((item, index) => {
+            // Re-assign listeners to prevent duplicates after DOM modifications
+            const oldItem = item.cloneNode(true);
+            item.parentNode.replaceChild(oldItem, item);
+            item = oldItem;
+            
+            item.addEventListener('click', () => {
+                showImage(index);
+            });
+
+            // Add download button functionality to each gallery item
+            let downloadBtn = item.querySelector('.download-item-btn');
+            if (!downloadBtn) {
+                downloadBtn = document.createElement('button');
+                downloadBtn.classList.add('download-item-btn');
+                downloadBtn.innerHTML = 'Download';
+                item.appendChild(downloadBtn);
+            }
+            // Removed mouse and touch listeners for hiding/showing the button
+
+            downloadBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const imageUrl = item.querySelector('img.zoomable-image').src;
+                const isPrivate = item.hasAttribute('data-private');
+                const adminPassword = 'Gujjar@5757';
+
+                if (isPrivate && !isAdmin) {
+                    const password = prompt('This image contains sensitive information. Please enter the admin password:');
+                    if (password === adminPassword) {
+                        isAdmin = true;
+                        sessionStorage.setItem('isAdmin', 'true');
+                        alert('Admin verification successful! Sensitive images can now be downloaded.');
+                        updateGalleryView();
+                        initiateDownload(imageUrl);
+                    } else {
+                        alert('Invalid password. Please try again.');
+                    }
+                } else {
+                    initiateDownload(imageUrl);
+                }
+            });
         });
-    });
+    }
+
+    // Function to handle the actual download logic
+    async function initiateDownload(imageUrl) {
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1) || 'download.jpg';
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            alert('Image has been downloaded!');
+        } catch (error) {
+            console.error('Error downloading the image:', error);
+            alert('Failed to download the image. Please try again.');
+        }
+    }
 
     // Close modal via close button
     closeModalBtn.addEventListener('click', closeModal);
 
     // Close modal via tap/click on the overlay
     imageModal.addEventListener('click', (e) => {
-        // Exclude the zoomed image itself from closing the modal
         if (e.target === imageModal) {
             closeModal();
         }
     });
 
-    // --- Admin Verification Button Functionality ---
-    if (adminVerifyBtn) {
-        adminVerifyBtn.addEventListener('click', () => {
-            const password = prompt('Please enter the admin password:');
-            // Hardcoded admin password from script.js
-            const adminPassword = 'Gujjar@5757'; 
-
-            if (password === adminPassword) {
-                isAdmin = true;
-                sessionStorage.setItem('isAdmin', 'true');
-                alert('Admin verification successful! Sensitive images are now visible.');
-                updateGalleryView(); // Update the gallery to show the images
-            } else {
-                alert('Invalid password. Please try again.');
-            }
-        });
-    }
-
-    // --- Swipe Gestures ---
-    let touchStartX = 0;
-    let touchEndX = 0;
+    // --- Swipe and Pinch Gestures ---
+    let touchStartY = 0;
+    let filterIndex = 0;
+    const filters = ['', 'filter-bw', 'filter-sepia'];
 
     imageModal.addEventListener('touchstart', (e) => {
         if (e.touches.length === 2) {
-            // Pinch-to-zoom starts
             isPinching = true;
             initialPinchDistance = getPinchDistance(e.touches);
+            initialScaleOnPinch = currentScale;
         } else if (e.touches.length === 1) {
-            // Single touch for swipe
             isPinching = false;
             touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            lastPanX = e.touches[0].screenX;
+            lastPanY = e.touches[0].screenY;
         }
     });
 
@@ -170,20 +214,63 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isPinching && e.touches.length === 2) {
             const newPinchDistance = getPinchDistance(e.touches);
             const pinchRatio = newPinchDistance / initialPinchDistance;
-            currentScale = pinchRatio;
-            zoomedImage.style.transform = `scale(${currentScale})`;
+            const newScale = initialScaleOnPinch * pinchRatio;
+            currentScale = Math.min(Math.max(1, newScale), 4);
+            zoomedImage.style.transform = `scale(${currentScale}) translate(${currentTranslateX}px, ${currentTranslateY}px)`;
+            e.preventDefault();
+        } else if (e.touches.length === 1) {
+            const touch = e.touches[0];
+            const dy = touch.screenY - touchStartY;
+            
+            if (dy > 50 && currentScale === 1) {
+                isSwipingDown = true;
+                imageModal.style.transform = `translateY(${dy}px)`;
+            } else if (currentScale > 1) {
+                const dx = touch.screenX - lastPanX;
+                const dyPan = touch.screenY - lastPanY;
+
+                currentTranslateX += dx / currentScale;
+                currentTranslateY += dyPan / currentScale;
+                
+                zoomedImage.style.transform = `scale(${currentScale}) translate(${currentTranslateX}px, ${currentTranslateY}px)`;
+
+                lastPanX = touch.screenX;
+                lastPanY = touch.screenY;
+                e.preventDefault();
+            }
         }
     });
 
     imageModal.addEventListener('touchend', (e) => {
         if (isPinching) {
-            // End of pinch gesture, reset
             isPinching = false;
-            initialPinchDistance = 0;
+        } else if (isSwipingDown) {
+            const swipeDistanceY = e.changedTouches[0].screenY - touchStartY;
+            if (swipeDistanceY > 100) {
+                closeModal();
+            } else {
+                imageModal.style.transform = 'translateY(0)';
+            }
+            isSwipingDown = false;
         } else {
-            // End of swipe gesture
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipeGesture();
+            const swipeDistanceX = touchStartX - e.changedTouches[0].screenX;
+            const swipeDistanceY = touchStartY - e.changedTouches[0].screenY;
+
+            if (currentScale === 1) {
+                if (Math.abs(swipeDistanceX) > 50) {
+                    if (swipeDistanceX > 0) {
+                        let nextIndex = (currentIndex + 1) % galleryImages.length;
+                        showImage(nextIndex);
+                    } else {
+                        let prevIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+                        showImage(prevIndex);
+                    }
+                } else if (Math.abs(swipeDistanceY) > 50) {
+                    filterIndex = (filterIndex + 1) % filters.length;
+                    zoomedImage.className = 'modal-content-img';
+                    zoomedImage.classList.add(filters[filterIndex]);
+                }
+            }
         }
     });
 
@@ -193,89 +280,34 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    function handleSwipeGesture() {
-        const swipeDistance = touchStartX - touchEndX;
-        if (Math.abs(swipeDistance) > 50) { // Check for a significant swipe
-            if (swipeDistance > 0) {
-                showNextImage();
-            } else {
-                showPrevImage();
+    // --- Photo Upload Functionality ---
+    if (photoUploadInput) {
+        photoUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const newDiv = document.createElement('div');
+                    newDiv.classList.add('gallery-item');
+                    const newImg = document.createElement('img');
+                    newImg.src = e.target.result;
+                    newImg.alt = "Uploaded Photo";
+                    newImg.classList.add('zoomable-image');
+                    newDiv.appendChild(newImg);
+                    galleryGrid.appendChild(newDiv);
+                    initializeGalleryItems();
+                };
+                reader.readAsDataURL(file);
             }
-        }
+        });
     }
 
-    // --- Gemini API Call for Caption Generation ---
-    generateCaptionBtn.addEventListener('click', async () => {
-        captionLoading.classList.remove('hidden');
-        captionDisplay.textContent = 'Generating caption...';
-        const imageUrl = zoomedImage.src;
-
-        try {
-            const response = await fetch('/your-gemini-api-endpoint', { // Replace with your actual API endpoint
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    imageUrl: imageUrl
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Gemini API Error:', errorData);
-                captionDisplay.textContent = 'Error generating caption. Please try again.';
-                return;
-            }
-
-            const result = await response.json();
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-                const text = result.candidates[0].content.parts[0].text;
-                captionDisplay.textContent = text;
-            } else {
-                captionDisplay.textContent = 'Could not generate a caption.';
-                console.warn('Gemini API response format unexpected:', result);
-            }
-        } catch (error) {
-            console.error('Error fetching caption from Gemini API:', error);
-            captionDisplay.textContent = 'Failed to connect to caption service.';
-        } finally {
-            captionLoading.classList.add('hidden');
-        }
-    });
-
-    // --- Image Download Functionality ---
-    downloadImageBtn.addEventListener('click', async () => {
-        const imageUrl = zoomedImage.src;
-        try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            // Get the filename from the URL, or use a default
-            const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1) || 'download.jpg';
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-        } catch (error) {
-            console.error('Error downloading the image:', error);
-            alert('Failed to download the image. Please try again.');
-        }
-    });
-
-    // --- Page Load Animations (Staggered Gallery Item Fade-in) ---
-    // Update view on page load
-    updateGalleryView();
+    // --- Page Load Animations ---
+    initializeGalleryItems();
     galleryImages.forEach((item, index) => {
         setTimeout(() => {
             item.style.opacity = '1';
-            item.style.transform = 'translateY(0)';
-        }, index * 80);
+            item.style.transform = 'translateY(0) rotate(0deg)';
+        }, index * 80 + 200);
     });
 });
