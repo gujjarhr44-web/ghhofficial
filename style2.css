@@ -105,31 +105,14 @@ body {
     display: flex;
 }
 
-.modal-overlay.audio-reactive {
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.9) 70%);
-    background-size: 200% 200%;
-    animation: audioPulse 5s ease-in-out infinite alternate;
-}
-
-@keyframes audioPulse {
-    0% {
-        background-position: 0% 0%;
-        opacity: 1;
-    }
-    100% {
-        background-position: 100% 100%;
-        opacity: 0.9;
-    }
-}
-
-
 .modal-content-img {
     max-width: 90%;
     max-height: 90%;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     animation: zoomIn 0.3s forwards;
-    touch-action: none;
+    /* Fixed touch-action for proper pinch-to-zoom */
+    touch-action: pan-x pan-y pinch-zoom;
     transition: filter 0.3s ease;
 }
 
